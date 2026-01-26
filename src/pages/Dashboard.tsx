@@ -1,8 +1,27 @@
 import { Calendar, CheckCircle, Clock, Banknote, Video } from 'lucide-react';
+import lion from '../assets/avatars/lion.png';
+import zebra from '../assets/avatars/zebra.png';
+import elephant from '../assets/avatars/elephant.png';
+import giraffe from '../assets/avatars/giraffe.png';
+import hippo from '../assets/avatars/hippo.png';
+import rhino from '../assets/avatars/rhino.png';
+import leopard from '../assets/avatars/leopard.png';
+import monkey from '../assets/avatars/monkey.png';
 
 const MEMBERS = ['Paola', 'Silvère', 'Adam', 'Daniel', 'Marcell', 'Hulerich', 'Yvan', 'Boris'];
 const START_MONTH = 1; // Février (0-indexed)
 const START_YEAR = 2026;
+
+const AVATAR_MAP: Record<string, string> = {
+    'Marcell': lion,
+    'Paola': zebra,
+    'Adam': elephant,
+    'Daniel': giraffe,
+    'Silvère': hippo,
+    'Hulerich': rhino,
+    'Yvan': leopard,
+    'Boris': monkey,
+};
 
 // --- Utilitaires Dates ---
 function getFirstSunday(year: number, month: number) {
@@ -152,8 +171,13 @@ export default function Dashboard() {
 
                         {/* Info Membre */}
                         <div className="flex items-center gap-4 mb-6">
-                            <div className={`w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold text-slate-900 ${item.status === 'current' ? 'bg-purple-400 text-white' : 'bg-slate-700 text-slate-300'} `}>
-                                {item.member.charAt(0)}
+                            <div className="relative">
+                                <div className={`w-16 h-16 rounded-full p-0.5 ${item.status === 'current' ? 'bg-gradient-to-tr from-purple-400 to-pink-400' : 'bg-white/10'} `}>
+                                    <div className="w-full h-full rounded-full overflow-hidden bg-slate-900">
+                                        <img src={AVATAR_MAP[item.member]} alt={item.member} className="w-full h-full object-cover" />
+                                    </div>
+                                </div>
+                                {item.status === 'current' && <span className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-slate-900"></span>}
                             </div>
                             <div>
                                 <p className="text-xs text-slate-400 uppercase">Bénéficiaire</p>
