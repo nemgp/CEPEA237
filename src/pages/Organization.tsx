@@ -14,7 +14,7 @@ const AVATAR_MAP: Record<string, string> = {
     'Daniel': giraffe,
     'Silvère': hippo,
     'Hulerich': rhino,
-    'Yvan': leopard,
+    'Yvan': rhino, // Temporaire
     'Boris': monkey,
     'Mairo': lion, // Reusing lion for Mairo
 };
