@@ -44,7 +44,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
                     <img src={logo} alt="Logo" className="w-10 h-10 bg-white/10 rounded-full p-1 border border-white/20" />
                     <div>
                         <h1 className="text-xl font-bold text-white">CEPEA237</h1>
-                        <p className="text-xs text-secondary">Entraide - Partage</p>
+                        <p className="text-xs text-secondary">Entraide - Partage - Évolution</p>
                     </div>
                 </div>
 
