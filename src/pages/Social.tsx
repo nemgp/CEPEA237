@@ -4,10 +4,10 @@ import { Heart } from 'lucide-react';
 const ASSIETTE = 1000;
 
 const HELP_TYPES = [
-    { id: 'deces', label: 'Décès Membre', percent: 1, icon: '⚰️' },
     { id: 'naissance', label: 'Naissance', percent: 0.5, icon: '👶' },
     { id: 'mariage', label: 'Mariage', percent: 0.5, icon: '💍' },
     { id: 'hospitalisation', label: 'Hospitalisation (>3j)', percent: 0.25, icon: '🏥' },
+    { id: 'deces', label: 'Perte grave', percent: 1, icon: '⚰️' },
 ];
 
 export default function Social() {
