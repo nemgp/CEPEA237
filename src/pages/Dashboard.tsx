@@ -1,4 +1,4 @@
-import { Calendar, CheckCircle, Clock, Banknote } from 'lucide-react';
+import { Calendar, CheckCircle, Clock, Banknote, Video } from 'lucide-react';
 
 const MEMBERS = ['Paola', 'Silvère', 'Adam', 'Daniel', 'Marcell', 'Hulerich', 'Yvan', 'Boris'];
 const START_MONTH = 1; // Février (0-indexed)
@@ -20,15 +20,15 @@ function getNextMeetingDate() {
 
     // 1er Dimanche du mois actuel
     const meetingThisMonth = getFirstSunday(currentYear, currentMonth);
-    // On met la réunion à 14h30 pour comparer correctement si c'est passé dans la journée
-    meetingThisMonth.setHours(14, 30, 0, 0);
+    // On met la réunion à 14h00 pour comparer correctement si c'est passé dans la journée
+    meetingThisMonth.setHours(14, 0, 0, 0);
 
     if (now < meetingThisMonth) {
         return meetingThisMonth;
     } else {
         // Sinon c'est le mois prochain
         const meetingNextMonth = getFirstSunday(currentYear, currentMonth + 1);
-        meetingNextMonth.setHours(14, 30, 0, 0);
+        meetingNextMonth.setHours(14, 0, 0, 0);
         return meetingNextMonth;
     }
 }
@@ -93,7 +93,12 @@ export default function Dashboard() {
                     <div>
                         <h2 className="text-sm font-semibold mb-1 text-slate-400 uppercase tracking-wider">Prochaine Réunion</h2>
                         <p className="text-3xl font-bold text-white capitalize">{nextMeetingStr}</p>
-                        <p className="text-xs text-cyan-300 mt-1 flex items-center gap-1"><Clock size={12} /> 14h30 précise</p>
+                        <div className="flex flex-col gap-1 mt-1">
+                            <p className="text-xs text-cyan-300 flex items-center gap-1"><Clock size={12} /> 14h00 précise</p>
+                            <a href="https://meet.google.com/mxu-rupw-qdi" target="_blank" rel="noopener noreferrer" className="text-xs text-purple-300 hover:text-purple-200 flex items-center gap-1 transition-colors underline decoration-dotted">
+                                <Video size={12} /> Lien de participation
+                            </a>
+                        </div>
                     </div>
                     <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center border border-white/10">
                         <Calendar className="text-purple-400" />
