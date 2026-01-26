@@ -1,15 +1,36 @@
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Calculator, Wallet, TrendingUp, AlertCircle } from 'lucide-react';
+import { Calculator, Wallet, TrendingUp, AlertCircle, PiggyBank } from 'lucide-react';
 
-const dataEpargne = [
-    { name: 'Jan', amount: 1200 },
-    { name: 'Fév', amount: 1550 },
-    { name: 'Mar', amount: 2100 },
-    { name: 'Avr', amount: 2450 },
-    { name: 'Mai', amount: 3100 },
-    { name: 'Juin', amount: 3800 },
+const START_MONTH = 1; // Février (0-indexed)
+const START_YEAR = 2026;
+
+// --- Mock Data ---
+const ACTIVE_LOANS = [
+    { member: 'Daniel', amount: 500, deadline: '01 Mars 2026' },
+    { member: 'Boris', amount: 300, deadline: '01 Avr. 2026' },
+    { member: 'Silvère', amount: 1000, deadline: '01 Mai 2026' },
 ];
+
+const MEMBER_SAVINGS = [
+    { member: 'Paola', amount: 2500 },
+    { member: 'Silvère', amount: 2300 },
+    { member: 'Adam', amount: 2100 },
+    { member: 'Daniel', amount: 2000 },
+    { member: 'Marcell', amount: 1950 },
+    { member: 'Hulerich', amount: 1800 },
+    { member: 'Yvan', amount: 1700 },
+    { member: 'Boris', amount: 1500 },
+];
+
+// Génération de données pour la courbe (Période Tontine = 24 mois)
+const SAVINGS_EVOLUTION = Array.from({ length: 24 }, (_, i) => {
+    const date = new Date(START_YEAR, START_MONTH + i, 1);
+    const monthStr = date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
+    // Simulation simple d'une croissance
+    const total = 12000 + (i * 850) + (Math.random() * 200);
+    return { name: monthStr, montant: Math.round(total) };
+});
 
 export default function Finance() {
     const [activeTab, setActiveTab] = useState<'cotisations' | 'prets' | 'sanctions'>('cotisations');
@@ -42,7 +63,7 @@ export default function Finance() {
             {/* Tabs */}
             <div className="flex gap-4 mb-6 overflow-x-auto pb-2">
                 <button onClick={() => setActiveTab('cotisations')} className={`btn ${activeTab === 'cotisations' ? 'btn-primary' : 'bg-white/10 text-white hover:bg-white/20'}`}>
-                    <Wallet className="mr-2" size={18} /> Cotisations
+                    <Wallet className="mr-2" size={18} /> Cotisations & Épargne
                 </button>
                 <button onClick={() => setActiveTab('prets')} className={`btn ${activeTab === 'prets' ? 'btn-primary' : 'bg-white/10 text-white hover:bg-white/20'}`}>
                     <Calculator className="mr-2" size={18} /> Simulateur Prêts
@@ -53,37 +74,97 @@ export default function Finance() {
             </div>
 
             {activeTab === 'cotisations' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="glass-card">
+                <div className="space-y-8">
+                    {/* Règles Tontine */}
+                    <div className="glass-card max-w-xl">
                         <h2 className="text-lg font-semibold mb-4 text-white">Règles Tontine</h2>
-                        <div className="space-y-3">
-                            <div className="flex justify-between p-3 bg-blue-500/20 border border-blue-500/30 rounded-xl text-blue-200">
-                                <span>Avant réception</span>
-                                <span className="font-bold">313 €</span>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-col justify-between p-4 bg-blue-500/20 border border-blue-500/30 rounded-xl text-blue-200">
+                                <span className="text-sm opacity-80">Avant réception</span>
+                                <span className="font-bold text-2xl">313 €</span>
                             </div>
-                            <div className="flex justify-between p-3 bg-green-500/20 border border-green-500/30 rounded-xl text-green-200">
-                                <span>Après réception</span>
-                                <span className="font-bold">331 €</span>
+                            <div className="flex flex-col justify-between p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-200">
+                                <span className="text-sm opacity-80">Après réception</span>
+                                <span className="font-bold text-2xl">331 €</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="glass-card">
-                        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-white">
-                            <TrendingUp size={20} /> Évolution Épargne Groupe
-                        </h2>
-                        <div className="h-64 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={dataEpargne}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                                    <XAxis dataKey="name" stroke="#cbd5e1" />
-                                    <YAxis stroke="#cbd5e1" />
-                                    <Tooltip
-                                        contentStyle={{ backgroundColor: '#1e293b', borderColor: 'rgba(255,255,255,0.1)', color: '#fff' }}
-                                    />
-                                    <Line type="monotone" dataKey="amount" stroke="#a855f7" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
-                                </LineChart>
-                            </ResponsiveContainer>
+                    {/* Section Dashboard Financier déplacée */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Liste des Prêts en cours */}
+                        <div className="glass-card lg:col-span-1">
+                            <h2 className="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                                <AlertCircle className="text-yellow-400" size={20} />
+                                Prêts en cours
+                            </h2>
+                            <div className="space-y-3">
+                                {ACTIVE_LOANS.map((loan, idx) => (
+                                    <div key={idx} className="bg-white/5 p-3 rounded-lg border border-white/5 flex justify-between items-center">
+                                        <div>
+                                            <p className="font-semibold text-slate-200">{loan.member}</p>
+                                            <p className="text-xs text-slate-400">Pour le {loan.deadline}</p>
+                                        </div>
+                                        <span className="font-mono font-bold text-yellow-300 bg-yellow-400/10 px-2 py-1 rounded text-sm">
+                                            {loan.amount} €
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Épargne par membre */}
+                        <div className="glass-card lg:col-span-1">
+                            <h2 className="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                                <PiggyBank className="text-blue-400" size={20} />
+                                Épargne Membres
+                            </h2>
+                            <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                                {MEMBER_SAVINGS.map((saver, idx) => (
+                                    <div key={idx} className="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
+                                        <span className="text-slate-300 text-sm">{saver.member}</span>
+                                        <span className="font-mono font-medium text-blue-300">
+                                            {saver.amount.toLocaleString('fr-FR')} €
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Évolution Épargne Groupe (Graphique) */}
+                        <div className="glass-card lg:col-span-1">
+                            <h2 className="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                                <TrendingUp className="text-green-400" size={20} />
+                                Évolution Épargne Groupe
+                            </h2>
+                            <div className="h-48 w-full">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <LineChart data={SAVINGS_EVOLUTION}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+                                        <XAxis
+                                            dataKey="name"
+                                            stroke="#94a3b8"
+                                            fontSize={10}
+                                            tickLine={false}
+                                            interval={3} // Affiche un label tous les 3 mois env
+                                        />
+                                        <YAxis hide domain={['dataMin - 1000', 'dataMax + 1000']} />
+                                        <Tooltip
+                                            contentStyle={{ backgroundColor: '#1e1b4b', borderColor: '#4c1d95', color: '#fff' }}
+                                            itemStyle={{ color: '#c4b5fd' }}
+                                            formatter={(value: any) => [`${value} €`, 'Épargne']}
+                                        />
+                                        <Line
+                                            type="monotone"
+                                            dataKey="montant"
+                                            stroke="#8b5cf6"
+                                            strokeWidth={3}
+                                            dot={{ fill: '#8b5cf6', strokeWidth: 2 }}
+                                            activeDot={{ r: 6, fill: '#fff' }}
+                                        />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
                         </div>
                     </div>
                 </div>
