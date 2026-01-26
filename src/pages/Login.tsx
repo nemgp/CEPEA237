@@ -23,6 +23,7 @@ export default function Login() {
                     <img src={logo} alt="CEPEA237" className="w-24 h-24 mx-auto mb-4 object-contain bg-white/5 rounded-full p-2 border border-white/10" />
                     <h1 className="text-2xl font-bold text-white">Bienvenue</h1>
                     <p className="text-slate-400">Portail CEPEA237</p>
+                    <p className="text-xs text-slate-500 mt-1">Entraide - Partage - Évolution</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
