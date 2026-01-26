@@ -2,7 +2,7 @@ import { Calendar, CheckCircle, Clock, Banknote } from 'lucide-react';
 
 const MEMBERS = ['Marcell', 'Paola', 'Adam', 'Daniel', 'Yvan', 'Boris', 'Hulerich', 'Silvère'];
 const START_MONTH = 1; // Février (0-indexed)
-const START_YEAR = 2025;
+const START_YEAR = 2026;
 
 // --- Utilitaires Dates ---
 function getFirstSunday(year: number, month: number) {
