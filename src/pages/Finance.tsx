@@ -76,9 +76,9 @@ export default function Finance() {
             {activeTab === 'cotisations' && (
                 <div className="space-y-8">
                     {/* Règles Tontine */}
-                    <div className="glass-card max-w-xl">
+                    <div className="glass-card max-w-3xl">
                         <h2 className="text-lg font-semibold mb-4 text-white">Règles Tontine</h2>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="flex flex-col justify-between p-4 bg-blue-500/20 border border-blue-500/30 rounded-xl text-blue-200">
                                 <span className="text-sm opacity-80">Avant réception</span>
                                 <span className="font-bold text-2xl">313 €</span>
@@ -87,11 +87,15 @@ export default function Finance() {
                                 <span className="text-sm opacity-80">Après réception</span>
                                 <span className="font-bold text-2xl">331 €</span>
                             </div>
+                            <div className="flex flex-col justify-between p-4 bg-purple-500/20 border border-purple-500/30 rounded-xl text-purple-200">
+                                <span className="text-sm opacity-80">Fond de soutien</span>
+                                <span className="font-bold text-xl">20 € / mois</span>
+                            </div>
                         </div>
                     </div>
 
                     {/* Section Dashboard Financier déplacée */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Liste des Prêts en cours */}
                         <div className="glass-card lg:col-span-1">
                             <h2 className="text-lg font-bold mb-4 text-white flex items-center gap-2">
@@ -130,41 +134,51 @@ export default function Finance() {
                                 ))}
                             </div>
                         </div>
+                    </div>
 
-                        {/* Évolution Épargne Groupe (Graphique) */}
-                        <div className="glass-card lg:col-span-1">
-                            <h2 className="text-lg font-bold mb-4 text-white flex items-center gap-2">
-                                <TrendingUp className="text-green-400" size={20} />
-                                Évolution Épargne Groupe
-                            </h2>
-                            <div className="h-48 w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={SAVINGS_EVOLUTION}>
-                                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
-                                        <XAxis
-                                            dataKey="name"
-                                            stroke="#94a3b8"
-                                            fontSize={10}
-                                            tickLine={false}
-                                            interval={3} // Affiche un label tous les 3 mois env
-                                        />
-                                        <YAxis hide domain={['dataMin - 1000', 'dataMax + 1000']} />
-                                        <Tooltip
-                                            contentStyle={{ backgroundColor: '#1e1b4b', borderColor: '#4c1d95', color: '#fff' }}
-                                            itemStyle={{ color: '#c4b5fd' }}
-                                            formatter={(value: any) => [`${value} €`, 'Épargne']}
-                                        />
-                                        <Line
-                                            type="monotone"
-                                            dataKey="montant"
-                                            stroke="#8b5cf6"
-                                            strokeWidth={3}
-                                            dot={{ fill: '#8b5cf6', strokeWidth: 2 }}
-                                            activeDot={{ r: 6, fill: '#fff' }}
-                                        />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            </div>
+                    {/* Évolution Épargne Groupe (Graphique) - Pleine largeur en bas */}
+                    <div className="glass-card w-full">
+                        <h2 className="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                            <TrendingUp className="text-green-400" size={20} />
+                            Évolution Épargne Groupe
+                        </h2>
+                        <div className="h-72 w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={SAVINGS_EVOLUTION} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                                    <XAxis
+                                        dataKey="name"
+                                        stroke="#94a3b8"
+                                        fontSize={12}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        interval={1}
+                                    />
+                                    <YAxis
+                                        hide={false}
+                                        stroke="#94a3b8"
+                                        fontSize={12}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickFormatter={(value) => `${value / 1000}k`}
+                                        domain={['auto', 'auto']}
+                                    />
+                                    <Tooltip
+                                        contentStyle={{ backgroundColor: '#1e1b4b', borderColor: '#4c1d95', color: '#fff' }}
+                                        itemStyle={{ color: '#c4b5fd' }}
+                                        formatter={(value: any) => [`${value} €`, 'Épargne']}
+                                        labelStyle={{ color: '#94a3b8' }}
+                                    />
+                                    <Line
+                                        type="monotone"
+                                        dataKey="montant"
+                                        stroke="#8b5cf6"
+                                        strokeWidth={4}
+                                        dot={{ fill: '#8b5cf6', strokeWidth: 2, r: 4 }}
+                                        activeDot={{ r: 8, fill: '#fff' }}
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
                         </div>
                     </div>
                 </div>
