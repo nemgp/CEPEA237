@@ -19,7 +19,7 @@ const AVATAR_MAP: Record<string, string> = {
     'Daniel': giraffe,
     'Silvère': hippo,
     'Hulerich': rhino,
-    'Yvan': rhino, // Temporaire : remplacement du léopard défectueux par rhino
+    'Yvan': leopard,
     'Boris': monkey,
 };
 
@@ -174,7 +174,11 @@ export default function Dashboard() {
                             <div className="relative">
                                 <div className={`w-16 h-16 rounded-full p-0.5 ${item.status === 'current' ? 'bg-gradient-to-tr from-purple-400 to-pink-400' : 'bg-white/10'} `}>
                                     <div className="w-full h-full rounded-full overflow-hidden bg-slate-900">
-                                        <img src={AVATAR_MAP[item.member]} alt={item.member} className="w-full h-full object-cover" />
+                                        <img
+                                            src={AVATAR_MAP[item.member]}
+                                            alt={item.member}
+                                            className={`w-full h-full object-cover ${item.member === 'Yvan' ? 'scale-125' : ''}`}
+                                        />
                                     </div>
                                 </div>
                                 {item.status === 'current' && <span className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-slate-900"></span>}

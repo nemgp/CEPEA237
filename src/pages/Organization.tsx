@@ -14,7 +14,7 @@ const AVATAR_MAP: Record<string, string> = {
     'Daniel': giraffe,
     'Silvère': hippo,
     'Hulerich': rhino,
-    'Yvan': rhino, // Temporaire
+    'Yvan': leopard,
     'Boris': monkey,
     'Mairo': lion, // Reusing lion for Mairo
 };
@@ -39,7 +39,11 @@ export default function Organization() {
                 {bureau.map((member) => (
                     <div key={member.role} className="glass-card flex items-center gap-4 hover:bg-white/10 transition-colors cursor-default">
                         <div className="w-14 h-14 rounded-full overflow-hidden bg-slate-900 border-2 border-white/10">
-                            <img src={AVATAR_MAP[member.name]} alt={member.name} className="w-full h-full object-cover" />
+                            <img
+                                src={AVATAR_MAP[member.name]}
+                                alt={member.name}
+                                className={`w-full h-full object-cover ${member.name === 'Yvan' ? 'scale-125' : ''}`}
+                            />
                         </div>
                         <div>
                             <h3 className="font-semibold text-lg text-white">{member.name}</h3>
