@@ -1,8 +1,36 @@
-import { Calendar, CheckCircle, Clock, Banknote, Video } from 'lucide-react';
+import { Calendar, CheckCircle, Clock, Banknote, Video, TrendingUp, AlertCircle, PiggyBank } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const MEMBERS = ['Paola', 'Silvère', 'Adam', 'Daniel', 'Marcell', 'Hulerich', 'Yvan', 'Boris'];
 const START_MONTH = 1; // Février (0-indexed)
 const START_YEAR = 2026;
+
+// --- Mock Data ---
+const ACTIVE_LOANS = [
+    { member: 'Daniel', amount: 500, deadline: '01 Mars 2026' },
+    { member: 'Boris', amount: 300, deadline: '01 Avr. 2026' },
+    { member: 'Silvère', amount: 1000, deadline: '01 Mai 2026' },
+];
+
+const MEMBER_SAVINGS = [
+    { member: 'Paola', amount: 2500 },
+    { member: 'Silvère', amount: 2300 },
+    { member: 'Adam', amount: 2100 },
+    { member: 'Daniel', amount: 2000 },
+    { member: 'Marcell', amount: 1950 },
+    { member: 'Hulerich', amount: 1800 },
+    { member: 'Yvan', amount: 1700 },
+    { member: 'Boris', amount: 1500 },
+];
+
+// Génération de données pour la courbe (Période Tontine = 24 mois)
+const SAVINGS_EVOLUTION = Array.from({ length: 24 }, (_, i) => {
+    const date = new Date(START_YEAR, START_MONTH + i, 1);
+    const monthStr = date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
+    // Simulation simple d'une croissance
+    const total = 12000 + (i * 850) + (Math.random() * 200);
+    return { name: monthStr, montant: Math.round(total) };
+});
 
 // --- Utilitaires Dates ---
 function getFirstSunday(year: number, month: number) {
@@ -119,6 +147,84 @@ export default function Dashboard() {
                 </div>
             </div>
 
+            {/* Nouvelle Section: Gestion Financière (Prêts & Épargne) */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+                {/* Liste des Prêts en cours */}
+                <div className="glass-card lg:col-span-1">
+                    <h2 className="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                        <AlertCircle className="text-yellow-400" size={20} />
+                        Prêts en cours
+                    </h2>
+                    <div className="space-y-3">
+                        {ACTIVE_LOANS.map((loan, idx) => (
+                            <div key={idx} className="bg-white/5 p-3 rounded-lg border border-white/5 flex justify-between items-center">
+                                <div>
+                                    <p className="font-semibold text-slate-200">{loan.member}</p>
+                                    <p className="text-xs text-slate-400">Pour le {loan.deadline}</p>
+                                </div>
+                                <span className="font-mono font-bold text-yellow-300 bg-yellow-400/10 px-2 py-1 rounded text-sm">
+                                    {loan.amount} €
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Épargne par membre */}
+                <div className="glass-card lg:col-span-1">
+                    <h2 className="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                        <PiggyBank className="text-blue-400" size={20} />
+                        Épargne Membres
+                    </h2>
+                    <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                        {MEMBER_SAVINGS.map((saver, idx) => (
+                            <div key={idx} className="flex justify-between items-center py-2 border-b border-white/5 last:border-0">
+                                <span className="text-slate-300 text-sm">{saver.member}</span>
+                                <span className="font-mono font-medium text-blue-300">
+                                    {saver.amount.toLocaleString('fr-FR')} €
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Évolution Épargne Groupe (Graphique) */}
+                <div className="glass-card lg:col-span-1">
+                    <h2 className="text-lg font-bold mb-4 text-white flex items-center gap-2">
+                        <TrendingUp className="text-green-400" size={20} />
+                        Évolution Épargne Groupe
+                    </h2>
+                    <div className="h-48 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={SAVINGS_EVOLUTION}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" />
+                                <XAxis
+                                    dataKey="name"
+                                    stroke="#94a3b8"
+                                    fontSize={10}
+                                    tickLine={false}
+                                    interval={3} // Affiche un label tous les 3 mois env
+                                />
+                                <YAxis hide domain={['dataMin - 1000', 'dataMax + 1000']} />
+                                <Tooltip
+                                    contentStyle={{ backgroundColor: '#1e1b4b', borderColor: '#4c1d95', color: '#fff' }}
+                                    itemStyle={{ color: '#c4b5fd' }}
+                                    formatter={(value: any) => [`${value} €`, 'Épargne']}
+                                />
+                                <Line
+                                    type="monotone"
+                                    dataKey="montant"
+                                    stroke="#8b5cf6"
+                                    strokeWidth={3}
+                                    dot={{ fill: '#8b5cf6', strokeWidth: 2 }}
+                                    activeDot={{ r: 6, fill: '#fff' }}
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </div>
+
             {/* Progression Tontine */}
             <h2 className="text-xl font-bold mb-6 text-white flex items-center gap-2">
                 🏆 Progression Tontine (Cycle 6)
@@ -136,7 +242,7 @@ export default function Dashboard() {
                                     ? 'bg-white/5 border-white/5 opacity-60 grayscale'
                                     : 'bg-white/5 border-white/10 hover:bg-white/10'
                             }
-`}
+`                       }
                     >
                         {/* Header Carte */}
                         <div className="flex justify-between items-start mb-4">
