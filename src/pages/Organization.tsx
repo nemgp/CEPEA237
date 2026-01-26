@@ -1,3 +1,24 @@
+import lion from '../assets/avatars/lion.png';
+import zebra from '../assets/avatars/zebra.png';
+import elephant from '../assets/avatars/elephant.png';
+import giraffe from '../assets/avatars/giraffe.png';
+import hippo from '../assets/avatars/hippo.png';
+import rhino from '../assets/avatars/rhino.png';
+import leopard from '../assets/avatars/leopard.png';
+import monkey from '../assets/avatars/monkey.png';
+
+const AVATAR_MAP: Record<string, string> = {
+    'Marcell': lion,
+    'Paola': zebra,
+    'Adam': elephant,
+    'Daniel': giraffe,
+    'Silvère': hippo,
+    'Hulerich': rhino,
+    'Yvan': leopard,
+    'Boris': monkey,
+    'Mairo': lion, // Reusing lion for Mairo
+};
+
 const bureau = [
     { role: 'Président', name: 'Marcell', color: 'bg-blue-100 text-blue-800' },
     { role: 'Secrétaire Général', name: 'Paola', color: 'bg-purple-100 text-purple-800' },
@@ -17,8 +38,8 @@ export default function Organization() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {bureau.map((member) => (
                     <div key={member.role} className="glass-card flex items-center gap-4 hover:bg-white/10 transition-colors cursor-default">
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-slate-900 ${member.color.split(' ')[0]}`}>
-                            {member.name.charAt(0)}
+                        <div className="w-14 h-14 rounded-full overflow-hidden bg-slate-900 border-2 border-white/10">
+                            <img src={AVATAR_MAP[member.name]} alt={member.name} className="w-full h-full object-cover" />
                         </div>
                         <div>
                             <h3 className="font-semibold text-lg text-white">{member.name}</h3>
