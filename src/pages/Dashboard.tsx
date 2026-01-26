@@ -1,6 +1,6 @@
 import { Calendar, CheckCircle, Clock, Banknote } from 'lucide-react';
 
-const MEMBERS = ['Marcell', 'Paola', 'Adam', 'Daniel', 'Yvan', 'Boris', 'Hulerich', 'Silvère'];
+const MEMBERS = ['Paola', 'Silvère', 'Adam', 'Daniel', 'Marcell', 'Hulerich', 'Yvan', 'Boris'];
 const START_MONTH = 1; // Février (0-indexed)
 const START_YEAR = 2026;
 
