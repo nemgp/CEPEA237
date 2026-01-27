@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileText, ExternalLink, BookOpen, ChevronDown, ChevronRight, Home, Users, Wallet, Heart, FileText as FileIcon, Shield, Lock, Smartphone, HelpCircle, Phone } from 'lucide-react';
+import { FileText, ExternalLink, BookOpen, ChevronDown, ChevronRight, Home, Users, Wallet, Heart, Shield, Lock, Smartphone, HelpCircle, Phone } from 'lucide-react';
 
 export default function Documents() {
     const [expandedSections, setExpandedSections] = useState<string[]>(['navigation']);

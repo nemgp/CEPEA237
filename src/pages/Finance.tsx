@@ -76,7 +76,7 @@ export default function Finance() {
         setError('');
         try {
             const [loansRes, savingsRes] = await Promise.all([
-                api.getLoans(user.username),
+                api.getLoans(), // No argument needed
                 api.getSavings(user.username)
             ]);
 
