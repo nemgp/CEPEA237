@@ -7,6 +7,7 @@ import Organization from './pages/Organization';
 import Finance from './pages/Finance';
 import Social from './pages/Social';
 import Documents from './pages/Documents';
+import AdminPasswordReset from './pages/AdminPasswordReset';
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/finance" element={<PrivateRoute><Finance /></PrivateRoute>} />
           <Route path="/social" element={<PrivateRoute><Social /></PrivateRoute>} />
           <Route path="/documents" element={<PrivateRoute><Documents /></PrivateRoute>} />
+          <Route path="/admin/reset-password" element={<PrivateRoute><AdminPasswordReset /></PrivateRoute>} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

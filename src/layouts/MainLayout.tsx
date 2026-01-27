@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, Wallet, HeartHandshake, FileText, Menu, X, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Wallet, HeartHandshake, FileText, Menu, X, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 import logo from '../assets/logo.png';
@@ -10,7 +10,7 @@ interface MainLayoutProps {
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-    const { user, logout } = useAuth();
+    const { user, logout, canEdit } = useAuth();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const navItems = [
@@ -68,13 +68,34 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 <div className="p-4 border-t border-white/10">
                     <div className="flex items-center gap-3 mb-4 px-2">
                         <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-sm font-bold border border-white/20">
-                            {user?.name?.charAt(0) || 'M'}
+                            {user?.username?.charAt(0).toUpperCase() || 'M'}
                         </div>
                         <div className="overflow-hidden">
-                            <p className="text-sm font-medium truncate text-white">{user?.name || 'Membre'}</p>
+                            <p className="text-sm font-medium truncate text-white">{user?.username || 'Membre'}</p>
                             <p className="text-xs text-secondary">Cycle 6</p>
                         </div>
                     </div>
+
+                    {/* Admin Section - Only for bureau members */}
+                    {canEdit() && (
+                        <div className="border-t border-white/10 pt-4 mb-4">
+                            <p className="text-xs text-slate-500 uppercase tracking-wider px-4 mb-2">Administration</p>
+                            <NavLink
+                                to="/admin/reset-password"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className={({ isActive }) =>
+                                    `flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-colors ${isActive
+                                        ? 'bg-purple-600 text-white'
+                                        : 'text-slate-300 hover:bg-white/5'
+                                    }`
+                                }
+                            >
+                                <Shield size={16} />
+                                Réinitialiser mots de passe
+                            </NavLink>
+                        </div>
+                    )}
+
                     <button
                         onClick={logout}
                         className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-white/5 rounded-lg transition-colors cursor-pointer"
