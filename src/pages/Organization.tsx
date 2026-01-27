@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, History, Image as ImageIcon, Users } from 'lucide-react';
+import { Mail, History, Image as ImageIcon, Users } from 'lucide-react';
 import lion from '../assets/avatars/lion.png';
 import zebra from '../assets/avatars/zebra.png';
 import elephant from '../assets/avatars/elephant.png';
@@ -25,66 +25,39 @@ const AVATAR_MAP: Record<string, string> = {
 const CURRENT_BUREAU = [
     {
         role: 'Président',
-        name: 'Marcell',
-        email: 'marcell@cepea237.com',
-        phone: '+33 6 XX XX XX XX',
-        showContact: true
+        name: 'Marcell'
     },
     {
         role: 'Secrétaire Général',
-        name: 'Paola',
-        email: 'paola@cepea237.com',
-        phone: '+33 6 XX XX XX XX',
-        showContact: true
+        name: 'Paola'
     },
     {
         role: 'Commissaire aux Comptes',
-        name: 'Adam',
-        email: 'adam@cepea237.com',
-        phone: '+33 6 XX XX XX XX',
-        showContact: true
+        name: 'Adam'
     },
     {
         role: 'Trésorier',
-        name: 'Daniel',
-        email: 'daniel@cepea237.com',
-        phone: '+33 6 XX XX XX XX',
-        showContact: true
+        name: 'Daniel'
     },
     {
         role: '1er Censeur',
-        name: 'Yvan',
-        email: 'yvan@cepea237.com',
-        phone: '+33 6 XX XX XX XX',
-        showContact: false
+        name: 'Yvan'
     },
     {
         role: '2ème Censeur',
-        name: 'Boris',
-        email: 'boris@cepea237.com',
-        phone: '+33 6 XX XX XX XX',
-        showContact: true
+        name: 'Boris'
     },
     {
         role: 'Membre',
-        name: 'Hulerich',
-        email: 'hulerich@cepea237.com',
-        phone: '+33 6 XX XX XX XX',
-        showContact: true
+        name: 'Hulerich'
     },
     {
-        role: 'Membre ',
-        name: 'Mairo',
-        email: 'mairo@cepea237.com',
-        phone: '+33 6 XX XX XX XX',
-        showContact: false
+        role: 'Membre',
+        name: 'Mairo'
     },
     {
-        role: 'Membre  ',
-        name: 'Silvère',
-        email: 'silvere@cepea237.com',
-        phone: '+33 6 XX XX XX XX',
-        showContact: true
+        role: 'Membre',
+        name: 'Silvère'
     },
 ];
 
@@ -218,27 +191,6 @@ export default function Organization() {
                                     <p className="text-sm text-cyan-300 mb-2">{member.role}</p>
                                 </div>
                             </div>
-
-                            {/* Contact Info */}
-                            {member.showContact && (
-                                <div className="space-y-2 pt-3 border-t border-white/10">
-                                    <div className="flex items-center gap-2 text-sm text-slate-300">
-                                        <Mail size={14} className="text-purple-400" />
-                                        <a href={`mailto:${member.email}`} className="hover:text-purple-300 transition-colors">
-                                            {member.email}
-                                        </a>
-                                    </div>
-                                    <div className="flex items-center gap-2 text-sm text-slate-300">
-                                        <Phone size={14} className="text-cyan-400" />
-                                        <span>{member.phone}</span>
-                                    </div>
-                                </div>
-                            )}
-                            {!member.showContact && (
-                                <div className="pt-3 border-t border-white/10">
-                                    <p className="text-xs text-slate-500 italic">Contact privé</p>
-                                </div>
-                            )}
                         </div>
                     ))}
                 </div>

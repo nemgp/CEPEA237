@@ -8,7 +8,7 @@ import rhino from '../assets/avatars/rhino.png';
 import leopard from '../assets/avatars/leopard.png';
 import monkey from '../assets/avatars/monkey.png';
 
-const MEMBERS = ['Paola', 'Silvère', 'Adam', 'Daniel', 'Marcell', 'Hulerich', 'Yvan', 'Boris'];
+const MEMBERS = ['Paola', 'Adam', 'Silvère', 'Marcell', 'Daniel', 'Yvan', 'Hulerich', 'Boris'];
 const START_MONTH = 1; // Février (0-indexed)
 const START_YEAR = 2026;
 
@@ -177,7 +177,7 @@ export default function Dashboard() {
                                         <img
                                             src={AVATAR_MAP[item.member]}
                                             alt={item.member}
-                                            className={`w-full h-full object-cover ${item.member === 'Yvan' ? 'scale-125' : ''}`}
+                                            className="w-full h-full object-cover"
                                         />
                                     </div>
                                 </div>
