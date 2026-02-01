@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Calculator, Wallet, TrendingUp, AlertCircle, PiggyBank, Plus, Edit2, Trash2, X, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import * as api from '../services/googleSheetsAPI';
 import type { Loan, Saving } from '../services/googleSheetsAPI';
 
-const START_MONTH = 1; // Février (0-indexed)
-const START_YEAR = 2026;
 
 // Date formatting utilities
 function formatDateDisplay(dateStr: string): string {
@@ -128,6 +126,8 @@ export default function Finance() {
 
     // Calculate savings evolution from real data
     const calculateSavingsEvolution = () => {
+        console.log('[calculateSavingsEvolution] Starting calculation with', savings.length, 'savings');
+
         // Group savings by month and calculate cumulative total
         const monthlyData: Record<string, number> = {};
 
@@ -136,6 +136,16 @@ export default function Finance() {
             const date = new Date(datePart);
             const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
 
+            console.log('[calculateSavingsEvolution] Processing:', {
+                member: saving.member,
+                amount: saving.amount,
+                type: saving.type,
+                date: saving.date,
+                datePart,
+                parsedDate: date,
+                monthKey
+            });
+
             if (!monthlyData[monthKey]) {
                 monthlyData[monthKey] = 0;
             }
@@ -143,12 +153,20 @@ export default function Finance() {
             monthlyData[monthKey] += saving.type === 'depot' ? saving.amount : -saving.amount;
         });
 
-        // Generate array for last 24 months
+        console.log('[calculateSavingsEvolution] Monthly data:', monthlyData);
+
+        // Generate array for last 24 months from today
         const result = [];
         let cumulativeTotal = 0;
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth(); // 0-indexed
 
-        for (let i = 0; i < 24; i++) {
-            const date = new Date(START_YEAR, START_MONTH + i, 1);
+        console.log('[calculateSavingsEvolution] Current date:', { currentYear, currentMonth: currentMonth + 1 });
+
+        // Start from 23 months ago and go to current month
+        for (let i = -23; i <= 0; i++) {
+            const date = new Date(currentYear, currentMonth + i, 1);
             const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
             const monthStr = date.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' });
 
@@ -163,10 +181,11 @@ export default function Finance() {
             });
         }
 
+        console.log('[calculateSavingsEvolution] Final result:', result);
         return result;
     };
 
-    const SAVINGS_EVOLUTION = calculateSavingsEvolution();
+    const SAVINGS_EVOLUTION = useMemo(() => calculateSavingsEvolution(), [savings]);
 
     // Calculate total savings per member
     const memberSavingsMap: Record<string, number> = {};
