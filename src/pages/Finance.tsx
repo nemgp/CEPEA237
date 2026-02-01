@@ -44,6 +44,7 @@ export default function Finance() {
     const [editingLoan, setEditingLoan] = useState<Loan | null>(null);
     const [editingSaving, setEditingSaving] = useState<Saving | null>(null);
     const [selectedMember, setSelectedMember] = useState<string>('');
+    const [reopenMemberModal, setReopenMemberModal] = useState(false);
 
     // Calculateur Prêts
     const [loanAmount, setLoanAmount] = useState(100);
@@ -72,6 +73,7 @@ export default function Finance() {
     const loadData = async () => {
         if (!user) return;
 
+        console.log('[Finance] Loading data for user:', user.username);
         setIsLoading(true);
         setError('');
         try {
@@ -80,13 +82,18 @@ export default function Finance() {
                 api.getSavings(user.username)
             ]);
 
+            console.log('[Finance] Loans response:', loansRes);
+            console.log('[Finance] Savings response:', savingsRes);
+
             if (loansRes.success && loansRes.data) {
                 setLoans(loansRes.data);
             }
             if (savingsRes.success && savingsRes.data) {
+                console.log('[Finance] Setting savings data:', savingsRes.data);
                 setSavings(savingsRes.data);
             }
         } catch (err: any) {
+            console.error('[Finance] Error loading data:', err);
             setError(err.message || 'Erreur lors du chargement des données');
         } finally {
             setIsLoading(false);
@@ -438,14 +445,37 @@ export default function Finance() {
             {showSavingModal && (
                 <SavingModal
                     saving={editingSaving}
+                    prefilledMember={reopenMemberModal ? selectedMember : undefined}
                     onClose={() => {
                         setShowSavingModal(false);
                         setEditingSaving(null);
+                        setReopenMemberModal(false);
+                        if (!reopenMemberModal) {
+                            setSelectedMember('');
+                        }
                     }}
-                    onSuccess={() => {
+                    onSuccess={async () => {
                         setShowSavingModal(false);
                         setEditingSaving(null);
-                        loadData();
+
+                        // Wait a bit for Google Sheets to propagate the data
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        await loadData();
+
+                        console.log('Data loaded, reopenMemberModal:', reopenMemberModal, 'selectedMember:', selectedMember);
+
+                        // Reopen member modal if we were adding/editing from there
+                        // We set a flag and let useEffect handle the reopening after state update
+                        if (reopenMemberModal && selectedMember) {
+                            // Trigger reopen via state update
+                            setTimeout(() => {
+                                setShowMemberSavingsModal(true);
+                                setReopenMemberModal(false);
+                            }, 100);
+                        } else {
+                            setSelectedMember('');
+                            setReopenMemberModal(false);
+                        }
                     }}
                 />
             )}
@@ -460,19 +490,14 @@ export default function Finance() {
                         setSelectedMember('');
                     }}
                     onAddTransaction={() => {
-                        // Pre-fill the member field when adding from member detail
-                        setEditingSaving({
-                            id: '',
-                            member: selectedMember,
-                            amount: 0,
-                            date: '',
-                            type: 'depot',
-                            notes: ''
-                        } as Saving);
+                        // Set to null to indicate new transaction, not update
+                        setEditingSaving(null);
+                        setReopenMemberModal(true);
                         setShowMemberSavingsModal(false);
                         setShowSavingModal(true);
                     }}
                     onEditTransaction={(saving) => {
+                        setReopenMemberModal(true);
                         setShowMemberSavingsModal(false);
                         setEditingSaving(saving);
                         setShowSavingModal(true);
@@ -660,7 +685,12 @@ function LoanModal({ loan, onClose, onSuccess }: { loan: Loan | null; onClose: (
 }
 
 // Saving Modal Component
-function SavingModal({ saving, onClose, onSuccess }: { saving: Saving | null; onClose: () => void; onSuccess: () => void }) {
+function SavingModal({ saving, prefilledMember, onClose, onSuccess }: {
+    saving: Saving | null;
+    prefilledMember?: string;
+    onClose: () => void;
+    onSuccess: () => void
+}) {
     const { user } = useAuth();
     const MEMBERS = ['Marcell', 'Paola', 'Daniel', 'Adam', 'Silvère', 'Yvan', 'Hulerich', 'Boris', 'Mairo'];
 
@@ -685,7 +715,7 @@ function SavingModal({ saving, onClose, onSuccess }: { saving: Saving | null; on
         return '';
     };
 
-    const [member, setMember] = useState(saving?.member || '');
+    const [member, setMember] = useState(saving?.member || prefilledMember || '');
     const [amount, setAmount] = useState(saving?.amount || 0);
     const [date, setDate] = useState(getISODate(saving?.date || ''));
     const [type, setType] = useState<'depot' | 'retrait'>(saving?.type || 'depot');
@@ -697,19 +727,30 @@ function SavingModal({ saving, onClose, onSuccess }: { saving: Saving | null; on
         e.preventDefault();
         if (!user) return;
 
+        console.log('[SavingModal] Submitting:', { member, amount, date, type, notes });
         setIsSubmitting(true);
         setError('');
 
         try {
+            let result;
             if (saving) {
                 // Update
-                await api.updateSaving(user.username, saving.id, { member, amount, date, type, notes });
+                console.log('[SavingModal] Updating saving:', saving.id);
+                result = await api.updateSaving(user.username, saving.id, { member, amount, date, type, notes });
             } else {
                 // Create
-                await api.createSaving(user.username, { member, amount, date, type, notes });
+                console.log('[SavingModal] Creating new saving');
+                result = await api.createSaving(user.username, { member, amount, date, type, notes });
             }
-            onSuccess();
+            console.log('[SavingModal] API result:', result);
+
+            if (result.success) {
+                onSuccess();
+            } else {
+                setError(result.error || 'Erreur lors de l\'enregistrement');
+            }
         } catch (err: any) {
+            console.error('[SavingModal] Error:', err);
             setError(err.message || 'Erreur lors de l\'enregistrement');
         } finally {
             setIsSubmitting(false);
