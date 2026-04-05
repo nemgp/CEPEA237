@@ -8,7 +8,7 @@ import rhino from '../assets/avatars/rhino.png';
 import leopard from '../assets/avatars/leopard.png';
 import monkey from '../assets/avatars/monkey.png';
 
-const MEMBERS = ['Paola', 'Adam', 'Silvère', 'Marcell', 'Daniel', 'Yvan', 'Hulerich', 'Boris'];
+const MEMBERS = ['Paola', 'Silvere', 'Adam', 'Marcell', 'Daniel', 'Yvan', 'Hulerich', 'Boris'];
 const START_MONTH = 1; // Février (0-indexed)
 const START_YEAR = 2026;
 
